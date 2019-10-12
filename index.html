@@ -12,14 +12,14 @@
 				<div class="w-16 h-16 p-2 text-xs m-1 flex justify-center text-center items-center uppercase">
 					<span class="opacity-50">group by</span>
 				</div>
-				<div class="w-16 h-16 p-2 text-xs m-1 cursor-pointer flex justify-center text-center items-center uppercase" v-for="trait in traits" @click="groupBy = trait" :class="'bg-'+trait.background+'-400'" v-if="trait.groupable">
+				<div class="w-16 h-16 p-2 text-xs m-1 cursor-pointer flex justify-center text-center items-center uppercase" v-for="trait in traits" @click="setDisplayBy(trait)" :class="'bg-'+trait.background+'-400'" v-if="trait.groupable">
 					<span class="opacity-50">{{ trait.label }}</span>
 				</div>
 
 				<div class="w-16 h-16 p-2 text-xs m-1 ml-12 flex justify-center text-center items-center uppercase">
 					<span class="opacity-50">order by</span>
 				</div>
-				<div class="w-16 h-16 p-2 text-xs m-1 cursor-pointer flex justify-center text-center items-center uppercase" v-for="trait in traits" @click="orderBy = trait" :class="'bg-'+trait.background+'-400'">
+				<div class="w-16 h-16 p-2 text-xs m-1 cursor-pointer flex justify-center text-center items-center uppercase" v-for="trait in traits" @click="setOrderBy(trait)" :class="'bg-'+trait.background+'-400'">
 					<span class="opacity-50">{{ trait.label }}</span>
 				</div>
 
@@ -27,16 +27,16 @@
 					<span class="opacity-50">filter by tag</span>
 				</div>
 				<div class="inline-block relative">
-					<select class="w-48 h-16 p-2 text-xs m-1 flex justify-center text-center items-center uppercase bg-gray-300 appearance-none">
+					<select class="w-48 h-16 p-2 text-xs m-1 flex justify-center text-center items-center uppercase bg-gray-300 appearance-none" @change="selectTag($event)">
 						<option value="" @click="tagFilter = null"></option>
-						<option v-for="tag in tags" @click="tagFilter = tag">{{ tag.label }}</option>
+						<option v-for="tag in tags">{{ tag.label }}</option>
 					</select>
 				</div>
 			</div>
 
 			<div class="flex">
 				<div class="m-8 flex-1 flex flex-wrap content-start justify-center" id="matrix">
-					<div class="m-1 cursor-pointer flex justify-center text-center items-center uppercase" v-for="style in filteredStyles" :class="styleBox(style)" @click="selectStyle(style)">
+					<div class="m-1 cursor-pointer flex justify-center text-center items-center uppercase" v-for="style in computedStyles" :class="styleBox(style)" @click="selectStyle(style)">
 						<span class="opacity-50">{{ style.label.name }}</span>
 					</div>
 				</div>
@@ -101,7 +101,7 @@
 						{ label: "SRM color", index: "srm" },
 						{ label: "IBU bitterness", index: "ibu" },
 					],
-					groupBy: null,
+					displayBy: null,
 					orderBy: null,
 					tagFilter: null,
 					tags: {},
@@ -114,20 +114,22 @@
 				}
 			},
 			computed: {
-				filteredStyles() {
+				computedStyles() {
 					let styles = this.styles.sort((a, b) => {
-						return a.label[this.orderBy.index] > b.label[this.orderBy.index]
+						if(typeof a.label[this.orderBy.index] === "string") {
+							return a.label[this.orderBy.index].localeCompare(b.label[this.orderBy.index])
+						}
+						return a.label[this.orderBy.index] - b.label[this.orderBy.index]
 					})
 
 					if(this.tagFilter) {
 						styles = styles.filter(style => this.tagFilter.styles.includes(style.label.index))
 					}
-
 					return styles
 				},
 			},
 			mounted() {
-				this.groupBy = this.traits[2]
+				this.displayBy = this.traits[2]
 				this.orderBy = this.traits[0]
 
 				fetch("https://raw.githubusercontent.com/gthmb/bjcp-2015-json/master/json/styleguide-2015.min.json").then(response => response.json()).then(data => {
@@ -154,6 +156,19 @@
 					} else {
 						this.selected = null
 					}
+				},
+				selectTag(event) {
+					if(!event.target.value) {
+						this.tagFilter = null
+					} else {
+						this.tagFilter = this.tags[event.target.value]
+					}
+				},
+				setDisplayBy(trait) {
+					this.displayBy = trait
+				},
+				setOrderBy(trait) {
+					this.orderBy = trait
 				},
 				buildStyleLabel(style, index) {
 					let name = style.name.split(": ")
@@ -182,14 +197,14 @@
 					}
 				},
 				styleBox(style) {
-					let stat = this.groupBy.index
+					let stat = this.displayBy.index
 					let background = "bg-gray-300"
 
 					for(let i in this.mappings.background) {
 						if(this.mappings[stat][i] >= style.label[stat]) {
 							break
 						}
-						background = "bg-" + this.groupBy.background + "-" + this.mappings.background[i]
+						background = "bg-" + this.displayBy.background + "-" + this.mappings.background[i]
 					}
 
 					if(this.selected) {
