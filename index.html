@@ -10,7 +10,7 @@
 		<div id="application">
 			<div class="flex p-8 flex-wrap justify-center bg-gray-100">
 				<div class="w-16 h-16 p-2 text-xs m-1 flex justify-center text-center items-center uppercase">
-					<span class="opacity-50">group by</span>
+					<span class="opacity-50">display by</span>
 				</div>
 				<div class="w-16 h-16 p-2 text-xs m-1 cursor-pointer flex justify-center text-center items-center uppercase" v-for="trait in traits" @click="setDisplayBy(trait)" :class="'bg-'+trait.background+'-400'" v-if="trait.groupable">
 					<span class="opacity-50">{{ trait.label }}</span>
