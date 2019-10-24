@@ -1,46 +1,55 @@
 <html lang="pl">
-	<head>
+	<head>	    
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta charset="utf-8">
 		<title>BJCP beer styles matrix</title>
 		<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/icon.min.css">
 		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<style>
+            
+        </style>
 	</head>
 	<body>
 		<div id="application">
-			<div class="flex p-8 flex-wrap justify-center bg-gray-100">
-				<div class="w-16 h-16 p-2 text-xs m-1 flex justify-center text-center items-center uppercase">
+			<div class="flex p-8 flex-wrap justify-start  lg:justify-center xl:justify-center bg-gray-100">
+			    <div class="flex p-4 flex-wrap">
+				<div class="w-full md:w-16 lg:w-16 xl:w-16  h-16 p-2 text-xs m-0 md:m-1 lg:m-1 xl:m-1 flex justify-start  lg:justify-center xl:justify-center text-center sm:text-left items-center uppercase custhead">
 					<span class="opacity-50">display by</span>
 				</div>
-				<div class="w-16 h-16 p-2 text-xs m-1 cursor-pointer flex justify-center text-center items-center uppercase" v-for="trait in traits" @click="setDisplayBy(trait)" :class="'bg-'+trait.background+'-400'" v-if="trait.groupable">
-					<span class="opacity-50">{{ trait.label }}</span>
+				<div class="w-16  h-16 p-2 text-xs m-1 cursor-pointer flex justify-start  lg:justify-center xl:justify-center text-center items-center uppercase" v-for="trait in traits" @click="setDisplayBy(trait)" :class="'bg-'+trait.background+'-400'" v-if="trait.groupable">
+					<span style="width:100%;" class="opacity-50 text-center">{{ trait.label }}</span>
 				</div>
-
-				<div class="w-16 h-16 p-2 text-xs m-1 ml-12 flex justify-center text-center items-center uppercase">
+                </div>
+                <div class="flex p-4 flex-wrap">
+				<div class="w-full md:w-16 lg:w-16 xl:w-16  h-8 md:h-16 lg:h-16 xl:h-16 p-2 text-xs m-0 md:m-1 lg:m-1 xl:m-1 ml-0  lg:ml-8 xl:ml-12 flex justify-start  lg:justify-center xl:justify-center text-center sm:text-left items-center uppercase custhead">
 					<span class="opacity-50">order by</span>
 				</div>
 				<div class="w-16 h-16 p-2 text-xs m-1 cursor-pointer flex justify-center text-center items-center uppercase" v-for="trait in traits" @click="setOrderBy(trait)" :class="'bg-'+trait.background+'-400'">
-					<span class="opacity-50">{{ trait.label }}</span>
+					<span style="width:100%;" class="opacity-50 text-center">{{ trait.label }}</span>
 				</div>
-
-				<div class="w-16 h-16 p-2 text-xs m-1 ml-12 flex justify-center text-center items-center uppercase">
+                </div>
+                <div class="flex p-4 flex-wrap">
+				<div class="w-16 h-16 p-2 text-xs m-1 ml-0 lg:ml-8 xl:ml-8 flex justify-center text-center items-center uppercase">
 					<span class="opacity-50">filter by tag</span>
 				</div>
+				    
 				<div class="inline-block relative">
 					<select class="w-48 h-16 p-2 text-xs m-1 flex justify-center text-center items-center uppercase bg-gray-300 appearance-none" @change="selectTag($event)">
 						<option value="" @click="tagFilter = null"></option>
 						<option v-for="tag in tags">{{ tag.label }}</option>
 					</select>
 				</div>
+				</div>
 			</div>
 
 			<div class="flex">
-				<div class="m-8 flex-1 flex flex-wrap content-start justify-center" id="matrix">
+				<div class="m-4 flex-1 flex flex-wrap content-start justify-center" id="matrix">
 					<div class="m-1 cursor-pointer flex justify-center text-center items-center uppercase" v-for="style in computedStyles" :class="styleBox(style)" @click="selectStyle(style)">
 						<span class="opacity-50">{{ style.label.name }}</span>
 					</div>
 				</div>
-				<div class="flex-1 m-8" v-if="selected">
+				<div class="flex-1 m-4" v-if="selected">
 					<h1 class="text-4xl mb-8">
 						{{ selected.label.name }}
 					</h1>
@@ -121,17 +130,16 @@
 						}
 						return a.label[this.orderBy.index] - b.label[this.orderBy.index]
 					})
-
 					if(this.tagFilter) {
 						styles = styles.filter(style => this.tagFilter.styles.includes(style.label.index))
 					}
+                    console.log("possible jump");
 					return styles
 				},
 			},
 			mounted() {
 				this.displayBy = this.traits[2]
 				this.orderBy = this.traits[0]
-
 				fetch("https://raw.githubusercontent.com/gthmb/bjcp-2015-json/master/json/styleguide-2015.min.json").then(response => response.json()).then(data => {
 					let index = 0
 					data.styleguide.class[0].category.forEach(category => {
@@ -141,13 +149,13 @@
 							index++
 						})
 					})
-
 					let ordered = {}
 					Object.keys(this.tags).sort().forEach(key => {
 						ordered[key] = this.tags[key]
 					})
 					this.tags = ordered
-				})
+                    window.scrollTo(0,0); 
+            	})
 			},
 			methods: {
 				selectStyle(style) {
@@ -173,7 +181,6 @@
 				buildStyleLabel(style, index) {
 					let name = style.name.split(": ")
 					let id = style.id.split("-")
-
 					style.label = []
 					style.label.name = name[name.length - 1]
 					style.label.id = id[0]
@@ -181,7 +188,6 @@
 					style.label.srm = (style.stats && style.stats.srm) ? ((Number(style.stats.srm.low) + Number(style.stats.srm.high)) / 2) : 0
 					style.label.ibu = (style.stats && style.stats.ibu) ? ((Number(style.stats.ibu.low) + Number(style.stats.ibu.high)) / 2) : 0
 					style.label.abv = (style.stats && style.stats.abv) ? ((Number(style.stats.abv.low) + Number(style.stats.abv.high)) / 2) : 0
-
 					if(style.tags) {
 						style.tags = style.tags.map(tag => tag.replace("-", " ").replace("-", " "))
 						style.tags.forEach(tag => {
@@ -195,25 +201,26 @@
 							}
 						})
 					}
+                    window.scrollTo(0,0);
 				},
 				styleBox(style) {
 					let stat = this.displayBy.index
 					let background = "bg-gray-300"
-
 					for(let i in this.mappings.background) {
 						if(this.mappings[stat][i] >= style.label[stat]) {
 							break
 						}
 						background = "bg-" + this.displayBy.background + "-" + this.mappings.background[i]
 					}
-
 					if(this.selected) {
-						if(this.selected.id === style.id) {
+						if(this.selected.id === style.id) {  
+                             window.scrollTo(0,0); 
 							return "w-24 h-24 p-2 text-xs shadow-lg " + background
-						}
+						}    
+                         window.scrollTo(0,0); 
 						return "w-24 h-24 p-2 text-xs opacity-75 " + background
 					}
-
+                     window.scrollTo(0,0); 
 					return "w-40 h-40 p-5 text-lg " + background
 				},
 			},
