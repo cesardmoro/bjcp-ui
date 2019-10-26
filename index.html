@@ -1,6 +1,6 @@
 <html lang="pl">
 	<head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta charset="utf-8">
 		<title>BJCP beer styles matrix</title>
 		<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
@@ -9,44 +9,44 @@
 	</head>
 	<body>
 		<div id="application">
-			<div class="flex p-8 flex-wrap justify-start  lg:justify-center xl:justify-center bg-gray-100">
-			    <div class="flex p-4 flex-wrap">
-				    <div class="w-full md:w-16 lg:w-16 xl:w-16  h-16 p-2 text-md m-0 md:m-1 lg:m-1 xl:m-1 flex justify-start  lg:justify-center xl:justify-center text-center sm:text-left items-center uppercase custhead">
-				    	<span class="opacity-50">display by</span>
-				    </div>
-				    <div class="w-16  h-16 p-2 text-xs m-1 cursor-pointer flex justify-start  lg:justify-center xl:justify-center text-center items-center uppercase" v-for="trait in traits" @click="setDisplayBy(trait)" :class="'bg-'+trait.background+'-400'" v-if="trait.groupable">
-					    <span class="w-full opacity-50 text-center">{{ trait.label }}</span>
-				    </div>
-                </div>
-                <div class="flex p-4 flex-wrap">
-    				<div class="w-full md:w-16 lg:w-16 xl:w-16  h-8 md:h-16 lg:h-16 xl:h-16 p-2 text-md m-0 md:m-1 lg:m-1 xl:m-1 ml-0  lg:ml-8 xl:ml-12 flex justify-start  lg:justify-center xl:justify-center text-center sm:text-left items-center uppercase custhead">
-    					<span class="opacity-50">order by</span>
-			    	</div>
-				    <div class="w-16 h-16 p-2 text-xs m-1 cursor-pointer flex justify-center text-center items-center uppercase" v-for="trait in traits" @click="setOrderBy(trait)" :class="'bg-'+trait.background+'-400'">
-				    	<span  class="w-full opacity-50 text-center">{{ trait.label }}</span>
-    				</div>
-                </div>
-                <div class="flex p-4 flex-wrap">
-		    		<div class="w-16 h-16 p-2 text-sm m-1 ml-0 lg:ml-8 xl:ml-8 flex justify-center text-center items-center uppercase">
-		    			<span class="opacity-50">filter by tag</span>
-		    		</div>
-				    
-				    <div class="inline-block relative">
-				    	<select class="w-48 h-16 p-2 text-xs m-1 flex justify-center text-center items-center uppercase bg-gray-300 appearance-none" @change="selectTag($event)">
-						    <option value="" @click="tagFilter = null"></option>
-						    <option v-for="tag in tags">{{ tag.label }}</option>
-					    </select>
-				    </div>
+			<div class="flex p-8 flex-wrap justify-start lg:justify-center xl:justify-center bg-gray-100">
+				<div class="flex p-4 flex-wrap">
+					<div class="w-full md:w-16 lg:w-16 xl:w-16 h-16 p-2 text-md m-0 md:m-1 lg:m-1 xl:m-1 flex justify-start lg:justify-center xl:justify-center text-center sm:text-left items-center uppercase">
+						<span class="opacity-50">display by</span>
+					</div>
+					<div class="w-16 h-16 p-2 text-xs m-1 cursor-pointer flex justify-start lg:justify-center xl:justify-center text-center items-center uppercase" v-for="trait in traits" @click="setDisplayBy(trait)" :class="'bg-'+trait.background+'-400'" v-if="trait.groupable">
+						<span class="w-full opacity-50 text-center">{{ trait.label }}</span>
+					</div>
+				</div>
+				<div class="flex p-4 flex-wrap">
+					<div class="w-full md:w-16 lg:w-16 xl:w-16 h-8 md:h-16 lg:h-16 xl:h-16 p-2 text-md m-0 md:m-1 lg:m-1 xl:m-1 ml-0 lg:ml-8 xl:ml-12 flex justify-start lg:justify-center xl:justify-center text-center sm:text-left items-center uppercase">
+						<span class="opacity-50">order by</span>
+					</div>
+					<div class="w-16 h-16 p-2 text-xs m-1 cursor-pointer flex justify-center text-center items-center uppercase" v-for="trait in traits" @click="setOrderBy(trait)" :class="'bg-'+trait.background+'-400'">
+						<span class="w-full opacity-50 text-center">{{ trait.label }}</span>
+					</div>
+				</div>
+				<div class="flex p-4 flex-wrap">
+					<div class="w-16 h-16 p-2 text-sm m-1 ml-0 lg:ml-8 xl:ml-8 flex justify-center text-center items-center uppercase">
+						<span class="opacity-50">filter by tag</span>
+					</div>
+
+					<div class="inline-block relative">
+						<select class="w-48 h-16 p-2 text-xs m-1 flex justify-center text-center items-center uppercase bg-gray-300 appearance-none" @change="selectTag($event)">
+							<option value="" @click="tagFilter = null"></option>
+							<option v-for="tag in tags">{{ tag.label }}</option>
+						</select>
+					</div>
 				</div>
 			</div>
 
-			<div class="flex">
+			<div class="flex" id="content">
 				<div class="m-4 flex-1 flex flex-wrap content-start justify-center" id="matrix">
 					<div class="m-1 cursor-pointer flex justify-center text-center items-center uppercase" v-for="style in computedStyles" :class="styleBox(style)" @click="selectStyle(style)">
 						<span class="opacity-50">{{ style.label.name }}</span>
 					</div>
 				</div>
-				<div class="flex-1 m-4" v-if="selected">
+				<div id="details" class="flex-1 m-4" v-if="selected">
 					<h1 class="text-4xl mb-8">
 						{{ selected.label.name }}
 					</h1>
@@ -162,8 +162,8 @@
 					} else {
 						this.selected = null
 					}
-                    window.scrollTo(0,300);
-                    
+					document.getElementById("content").scrollIntoView()
+
 				},
 				selectTag(event) {
 					if(!event.target.value) {
@@ -203,7 +203,6 @@
 							}
 						})
 					}
-					window.scrollTo(0,0);					 
 				},
 				styleBox(style) {
 					let stat = this.displayBy.index
@@ -215,7 +214,7 @@
 						}
 						background = "bg-" + this.displayBy.background + "-" + this.mappings.background[i]
 					}
-                    
+
 					if(this.selected) {
 						if(this.selected.id === style.id) {
 							return "w-24 h-24 p-2 text-xs shadow-lg " + background
