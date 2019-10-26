@@ -162,6 +162,8 @@
 					} else {
 						this.selected = null
 					}
+                    window.scrollTo(0,300);
+                    
 				},
 				selectTag(event) {
 					if(!event.target.value) {
@@ -213,8 +215,7 @@
 						}
 						background = "bg-" + this.displayBy.background + "-" + this.mappings.background[i]
 					}
-					window.scrollTo(0,0);
-
+                    
 					if(this.selected) {
 						if(this.selected.id === style.id) {
 							return "w-24 h-24 p-2 text-xs shadow-lg " + background
